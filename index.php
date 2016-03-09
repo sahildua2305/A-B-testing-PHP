@@ -3,7 +3,7 @@
  * @Author: sahildua2305
  * @Date:   2016-03-10 01:01:24
  * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-10 02:01:24
+ * @Last Modified time: 2016-03-10 03:50:45
  */
 
 require_once('abms.php');
@@ -26,7 +26,9 @@ $my_test->add_variation(1, 'Mansimar Kaur');
 
 	<body>
 		<?php
+
 			$index = $my_test->get_user_segment();
+
 			if($index == -1){
 				$text = "#ego";
 			}
@@ -34,7 +36,9 @@ $my_test->add_variation(1, 'Mansimar Kaur');
 				$val = $my_test->access_variations($index);
 				$text = $val['value'];
 			}
+
 			echo'<a href="success.php?variations='.$index.'">'.$text.'</a>';
+
 		?>
 	</body>
 </html>

@@ -3,7 +3,7 @@
  * @Author: sahildua2305
  * @Date:   2016-03-10 01:05:47
  * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-10 02:37:29
+ * @Last Modified time: 2016-03-10 03:49:18
  */
 
 
@@ -75,10 +75,9 @@ class abms
 		return $current_variation;
 	}
 
+	
 	public function access_variations ($index){
 		return $this->variations[$index];
 	}
-
-
 
 }
