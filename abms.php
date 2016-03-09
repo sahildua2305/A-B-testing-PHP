@@ -16,6 +16,7 @@ class abms
 	private $variations = array();
 	private $adaptive = FALSE;
 	private $current_variation;
+	private $detect_bots = TRUE;
 	
 
 	function __construct ($name, $duration, $adaptive = FALSE) {
@@ -58,6 +59,13 @@ class abms
 		// check for which algorithm we're going to use for splitting the user traffic
 		if($this->adaptive == TRUE) {
 			// implement that fucking 90-10 logic
+			$random= rand(0,100001);
+			if($random<101){
+				$this->current_variation = rand(1, 100000) % 2;
+			}
+			else{
+
+			}
 		}
 		else {
 			// implement 50-50 logic (random)
@@ -66,5 +74,11 @@ class abms
 
 		return $current_variation;
 	}
+
+	public function access_variations ($index){
+		return $this->variations[$index];
+	}
+
+
 
 }
