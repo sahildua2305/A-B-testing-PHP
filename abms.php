@@ -102,7 +102,7 @@ class abms {
 
 		// if this is variation for a new test, add the variation in `variation` table
 		if($this->new_test)
-			mysqli_query($this->connection, "INSERT INTO variation(test_id, variation_index, show_count, success_count) VALUES('$this->test_id', '$index', 0, 0)") or die("error in an inserting variation");
+			mysqli_query($this->connection, "INSERT INTO variation(test_id, variation_index, show_count, success_count) VALUES('$this->test_id', '$index', 1, 1)") or die("error in an inserting variation");
 	}
 
 
