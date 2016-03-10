@@ -55,16 +55,16 @@ class abms
 			$this->test_start_timestamp = $curr_time;
 			mysqli_query($this->connection, "INSERT INTO test(test_name, ongoing, start_timestamp) VALUES('$name', 1, '$curr_time')") or die("errorrr");
 			$query = mysqli_query($this->connection, "SELECT test_id FROM test WHERE test_name='$name'");
+			while($row = mysqli_fetch_array($query)){
+				$this->test_id = $row['test_id'];
+			}
 		}
 		else{
 			$this->new_test = FALSE;
 			while($row = mysqli_fetch_array($query)){
 				$this->test_start_timestamp = $row['start_timestamp'];
+				$this->test_id = $row['test_id'];
 			}
-		}
-
-		while($row = mysqli_fetch_array($query)){
-			$this->test_id = $row['test_id'];
 		}
 
 		$this->test_name = $name;

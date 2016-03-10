@@ -6,10 +6,10 @@
 		$curr_variation = htmlspecialchars($_GET['variation']);
 		$test_id = htmlspecialchars($_GET['test_id']);
 
-		$connection = mysqli_connect($mysql_host , $mysql_user , $mysql_pass, $mysql_data);
-		if(!($connection)){
-			die(mysqli_error($connection));
-		}
+		// $connection = mysqli_connect($mysql_host , $mysql_user , $mysql_pass, $mysql_data);
+		// if(!($connection)){
+		// 	die(mysqli_error($connection));
+		// }
 
 		$query = mysqli_query($connection, "SELECT success_count FROM variation WHERE test_id='$test_id' AND variation_index='$curr_variation'") or die("error in getting");
 		$count = 0;
