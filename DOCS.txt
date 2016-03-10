@@ -1,0 +1,209 @@
+<a id="top"></a>
+# Charts 4 PHP Framework Documentation
+
+## Setup
+
+### Installing Demos   
+
+1) Place all files in a directory on the web server. e.g. ".../www/chartphp/"
+
+2) Run the product demos in browser. e.g. http://localhost/chartphp/index.php 
+	
+### Integration in your Project
+
+- For integration in your app, you might need to consider 2 things.
+
+1) The folder "../../lib" will be replaced by path where you place 'lib' folder (if changed)
+
+	<script src="../../lib/js/jquery.min.js"></script>
+	<script src="../../lib/js/chartphp.js"></script>
+	<script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="../../lib/js/chartphp.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+
+2) Update include path where you place lib/inc/chartphp_dist.php. (if changed)
+
+	include("../../lib/inc/chartphp_dist.php");
+	$p = new chartphp();
+	
+### Upgrading from older version
+
+Simply override `lib/inc` & `lib/js` from latest build to the chartphp folder in previous implementations.
+Same applies to upgrade from free to full version.
+
+[^ Top](#top)
+	
+<a id="getting-started"></a>
+## Getting Started
+
+### Creating your First Chart
+
+Step1: Add PHP Chart configuration code
+
+	<?php
+	// include and create object
+	include("../../lib/inc/chartphp_dist.php");
+	$p = new chartphp();
+
+	// set few params
+	$p->data =array(array(3,7,9,1,4,6,8,2,5),array(5,3,8,2,6,2,9,2,6));
+	$p->chart_type = "area";
+
+	// render chart and get html/js output
+	$out = $p->render('c1');
+	?>
+
+Step2: Include JS and CSS files in your html page	
+	
+	<!DOCTYPE html>
+	<html>
+	<head>
+
+		<script src="../../lib/js/jquery.min.js"></script>
+		<script src="../../lib/js/chartphp.js"></script>
+		<link rel="stylesheet" href="../../lib/js/chartphp.css">
+		
+	</head>
+	
+Step3: Print the `$out` variable where you wish to display chart.
+
+	<body>
+		<div style="margin:10px">
+		
+		<!-- display chart here -->
+		<?php echo $out?>
+		<!-- display chart here -->
+		
+		</div>	
+	</body>
+	</html>
+
+#### Resources
+
+- [Live demo](http://www.chartphp.com/demo/)
+- You can check this demo in archive `demos/basic/area.php`
+
+#### Explanation
+
+- The PHP Part configured the chart and rendered the output to $out variable.
+- In HTML Part, we displayed the generated chart code `$out` along with few external css/js files. It's up to you to place external css and js files at appropriate locations.
+- `->render()` will generate the final output, to be displayed in view. It takes **chart ID** as input, which should be unique on a page.
+
+## Setting Chart Options
+
+Based on following example code, we can add many other chart params.
+
+	<?php
+	// include and create object
+	include("../../lib/inc/chartphp_dist.php");
+	$p = new chartphp();
+
+	// set few params
+	$p->data =array(array(3,7,9,1,4,6,8,2,5),array(5,3,8,2,6,2,9,2,6));
+	$p->chart_type = "area";
+
+	// render chart and get html/js output
+	$out = $p->render('c1');
+	?>
+
+### Chart Type
+
+Currently following chart types are supported:
+	
+	- line
+	- area
+	- bar
+	- donut
+	- pie
+	- bubble
+	- stacked-bar
+	- funnel
+	
+Usage:
+
+	$p->chart_type = "area";
+	
+### Chart Title
+
+	$p->title = "Category Sales";	
+	
+### Chart Labels
+
+	$p->xlabel = "My X Axis";
+	$p->ylabel = "My Y Axis";
+
+### Chart Data
+
+You can either specify data points:
+		
+	$p->data = array(array(array("2010/10",48.25),array("2011/01",238.75),array("2011/02",95.50)));
+
+To create chart directly from database query:
+
+	$p->data_sql = "select c.categoryname, sum(a.UnitPrice * a.Quantity) as Sales
+					from products b, `order details` a, categories c
+					where a.productid = b.productid and c.categoryid = b.categoryid
+					group by c.categoryid
+					order by c.categoryid";
+						
+For Database driven charts, refer 'Database Integration' topic in docs.
+						
+### Chart Colors
+
+	// set color to green
+	$p->color = "green";
+	
+	// set color to red,blue,green
+	$p->color = "red,blue,green";
+	
+	// set colors using hex code
+	$p->color = "#1AAF5D,#F2C500,#F45B00,#8E0000,#0E948C";
+							
+More than one colors are used for pie,donut,bubble OR e.g. multi-line chart.
+
+### Chart Dimensions
+
+You can specify width x height in % or px.
+
+	$p->width = "80%";
+	$p->height = "100%";
+
+## Database Integration
+
+Step1 is to set database configuration in config.php. 
+
+To connect to MySqli:
+
+	define("CHARTPHP_DBTYPE","mysqli");
+	define("CHARTPHP_DBHOST","localhost");
+	define("CHARTPHP_DBUSER","user");
+	define("CHARTPHP_DBPASS","pass");
+	define("CHARTPHP_DBNAME","northwind");
+
+To connect using PDO:
+
+	define("CHARTPHP_DBTYPE","pdo");
+	define("CHARTPHP_DBHOST","sqlite:../../sampledb/Northwind.db");
+	define("CHARTPHP_DBUSER","");
+	define("CHARTPHP_DBPASS","");
+	define("CHARTPHP_DBNAME","");
+
+Next is to include configuration file in your code.
+	
+	include("../../config.php"); 
+	
+Final Step is to define `data_sql` property, that will load data points from database.
+
+	$p->data_sql = "select strftime('%Y-%m',o.orderdate) as Year, sum(d.quantity) as Sales
+					from `order details` d, orders o
+					where o.orderid = d.orderid
+					group by strftime('%Y-%m',o.orderdate)"; 
+
+#### Resources
+
+- [Live demo](http://www.chartphp.com/demo/demos/database/bar.php)
+- [Code Sample](http://www.chartphp.com/demo/demos/database/bar.phps)
+- You can check this demo in archive `demos/database/bar.php`
+
+---
+Updated Wednesday, March 9th, 2015

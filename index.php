@@ -8,7 +8,7 @@
 
 require_once('abms.php');
 
-$my_test = new abms('hyperlink text', 24*60*60, FALSE);
+$my_test = new abms('hyperlink text', 6, FALSE);
 
 $my_test->add_variation(0, 'Sahil Dua');
 $my_test->add_variation(1, 'Mansimar Kaur');
@@ -29,15 +29,24 @@ $my_test->add_variation(1, 'Mansimar Kaur');
 
 			$index = $my_test->get_user_segment();
 
-			if($index == -1){
-				$text = "#ego";
-			}
-			else{
+			if($my_test->is_test_over()){
+
 				$val = $my_test->access_variations($index);
 				$text = $val['value'];
-			}
+				echo'<a href="success.php">' . $text . '</a>';
 
-			echo'<a href="success.php?variations='.$index.'">'.$text.'</a>';
+			}
+			else{
+				if($index == -1){
+					$text = "#ego";
+				}
+				else{
+					$val = $my_test->access_variations($index);
+					$text = $val['value'];
+				}
+
+				echo'<a href="success.php?variation=' . $index . '&test_id=' . $my_test->get_test_id() . '">' . $text . '</a>';
+			}
 
 		?>
 	</body>
