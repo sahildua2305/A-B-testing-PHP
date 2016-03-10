@@ -16,3 +16,4 @@ A light-weight and modular framework written in PHP that automates A/B testing
  - Instantiate a new object of `absm` with desired parameters
  - Define different variations of the desired element on your page
  - Find the segment for any user before rendering HTML for that user using method `get_user_segment()`
+ - And start tracking your events!
