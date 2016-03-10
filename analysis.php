@@ -4,7 +4,10 @@
 	include("lib/inc/chartphp_dist.php");
 
 	
+	$output = array();
+
 	$test_query = mysqli_query($connection,"SELECT * FROM test WHERE ongoing=1") or die("error in getting");
+	$j = 0;
 	while($row = mysqli_fetch_array($test_query)){
 		$test_id = $row['test_id'];
 
@@ -33,9 +36,9 @@
 		$p->export = true;
 		$p->options["legend"]["show"] = true;
 
-		$out = $p->render('c1');
+		$output[$j] = $p->render('c' . $j);
 
-		break;
+		$j += 1;
 	}
 
 ?>
@@ -47,10 +50,13 @@
 		<link rel="stylesheet" href="lib/js/chartphp.css">
 	</head>
 	<body>
-		<div style="width:40%; min-width:450px;">
-			<?php echo $out; ?>
-		</div> 
+
+		<?php
+
+			foreach ($output as $key => $value) {
+				echo '<div style="width:40%; min-width:450px;">' . $value . '</div><br><br><br>';		
+			}
+
+		?>
 	</body>
 </html>
-
-
