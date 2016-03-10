@@ -8,7 +8,7 @@
 
 require_once('abms.php');
 
-$my_test = new abms('hyperlink text', 6*70707070, FALSE);
+$my_test = new abms('hyperlink text', 6*70707070, TRUE);
 
 $my_test->add_variation(0, 'Sahil Dua');
 $my_test->add_variation(1, 'Mansimar Kaur');

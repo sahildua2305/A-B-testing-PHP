@@ -6,8 +6,6 @@
  * @Last Modified time: 2016-03-10 03:49:18
  */
 
-// require_once 'connection.inc.php';
-
 class abms
 {
 	private $test_name;
@@ -121,7 +119,21 @@ class abms
 				$this->current_variation = rand(1, 100000) % 2;
 			}
 			else{
-
+				// find the ratios for two variations and return the one with greater ratio
+				$query = mysqli_query($this->connection, "SELECT * FROM variation WHERE test_id='$this->test_id'") or die("error in getting");
+				$winner = 0;
+				$max_ratio = -1.0;
+				while($row = mysqli_fetch_array($query)){
+					if($row['show_count'] != 0)
+						$ratio = $row['success_count'] / $row['show_count'];
+					else
+						$ratio = 0;
+					if($ratio > $max_ratio){
+						$max_ratio = $ratio;
+						$winner = $row['variation_index'];
+					}
+				}
+				$this->current_variation = $winner;
 			}
 		}
 		else {
