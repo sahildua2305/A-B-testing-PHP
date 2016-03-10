@@ -3,11 +3,13 @@
  * @Author: sahildua2305
  * @Date:   2016-03-10 01:05:47
  * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-10 03:49:18
+ * @Last Modified time: 2016-03-10 09:38:24
  */
 
-class abms
-{
+/**
+ * Main class absm for defining a particular A/B test
+ */
+class abms {
 	private $test_name;
 	private $is_bot = FALSE;
 	private $test_duration;
@@ -27,13 +29,20 @@ class abms
 	private $test_over = FALSE;
 
 
+	/**
+	 * __construct - Constructor for absm class
+	 * @param string  $name     Test name
+	 * @param int 	  $duration Test run duration
+	 * @param boolean $adaptive Determines whether the user split will be adaptive or not
+	 *                          Adaptive split means implementation of 90/10 split algorithm
+	 */
 	function __construct ($name, $duration, $adaptive = FALSE) {
-		if($this->detect_bots == TRUE){
+
+		// detect if it's a bot
+		if($this->detect_bots == TRUE) {
 			$bots = array('googlebot', 'msnbot', 'slurp', 'ask jeeves', 'crawl', 'ia_archiver', 'lycos');
-			foreach($bots as $botname)
-			{
-				if(stripos($_SERVER['HTTP_USER_AGENT'], $botname) !== FALSE)
-				{
+			foreach($bots as $botname) {
+				if(stripos($_SERVER['HTTP_USER_AGENT'], $botname) !== FALSE) {
 					$this->is_bot = TRUE;
 					break;
 				}
@@ -48,7 +57,9 @@ class abms
 		}
 
 		$query = mysqli_query($this->connection, "SELECT * FROM test WHERE test_name='$name'") or die("error");
+
 		if(mysqli_num_rows($query) == 0) {
+			// This is the first time this test is run
 			$curr_time = time();
 			$this->test_start_timestamp = $curr_time;
 			mysqli_query($this->connection, "INSERT INTO test(test_name, ongoing, start_timestamp) VALUES('$name', 1, '$curr_time')") or die("errorrr");
@@ -58,6 +69,7 @@ class abms
 			}
 		}
 		else{
+			// This test has been saved earlier as well
 			$this->new_test = FALSE;
 			while($row = mysqli_fetch_array($query)){
 				$this->test_start_timestamp = $row['start_timestamp'];
@@ -69,11 +81,17 @@ class abms
 		$this->test_duration = $duration;
 		$this->adaptive = $adaptive;
 
+		// Check if this test is over or not
 		if($this->test_start_timestamp + $this->test_duration <= time())
 			$this->test_over = TRUE;
 	}
 
 
+	/**
+	 * add_variation - Public method for adding a new variation to a test case
+	 * @param int 	$index 	variation index (0 stands for `A` and 1 stands for `B`)
+	 * @param int 	$value 	variation value
+	 */
 	public function add_variation ($index, $value) {
 		// add a new variation with given index and value to $this->variations
 		$a = array(
@@ -82,17 +100,26 @@ class abms
 		);
 		array_push($this->variations, $a);
 
+		// if this is variation for a new test, add the variation in `variation` table
 		if($this->new_test)
 			mysqli_query($this->connection, "INSERT INTO variation(test_id, variation_index, show_count, success_count) VALUES('$this->test_id', '$index', 0, 0)") or die("error in an inserting variation");
 	}
 
 
+	/**
+	 * get_user_segment - choose which of the segment among A and B
+	 * will the current user be directed to
+	 * 
+	 */
 	public function get_user_segment () {
+
+		// If it's a bot visit, return -1 (control statement)
 		if ($this->is_bot == TRUE) {
 			$this->current_variation = -1;
 			return $this->current_variation;
 		}
 
+		// If the current test is already over, return the automatic winner
 		if($this->test_over){
 			$winner = 0;
 			$max_ratio = -1.0;
@@ -113,7 +140,7 @@ class abms
 
 		// check for which algorithm we're going to use for splitting the user traffic
 		if($this->adaptive == TRUE) {
-			// implement that fucking 90-10 logic
+			// implement that f*cking 90-10 logic
 			$random= rand(0,100001);
 			if($random<101){
 				$this->current_variation = rand(1, 100000) % 2;
@@ -141,6 +168,7 @@ class abms
 			$this->current_variation = rand(1, 100000) % 2;
 		}
 
+		// Increment show_count for this chosen variation
 		$query = mysqli_query($this->connection, "SELECT show_count FROM variation WHERE test_id='$this->test_id' AND variation_index='$this->current_variation'") or die("error in getting");
 		$count = 0;
 		while($row = mysqli_fetch_array($query)){
@@ -153,16 +181,28 @@ class abms
 	}
 
 	
+	/**
+	 * access_variations - Access variations for a particular test_id
+	 * @param  int 	$index 	Test ID for which we have to access the variations
+	 */
 	public function access_variations ($index){
 		return $this->variations[$index];
 	}
 
 
+	/**
+	 * get_test_id - Get Test ID for the current instance of test
+	 */
 	public function get_test_id () {
 		return $this->test_id;
 	}
 
 
+	/**
+	 * is_test_over - Check if this test is already over
+	 * @return boolean Returns TRUE if this test is already over
+	 *                         and FALSE if it's not
+	 */
 	public function is_test_over () {
 		return $this->test_over;
 	}
