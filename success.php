@@ -1,7 +1,7 @@
 <?php
 	
-	include 'connection.inc.php';
-	include 'functions.php';
+	include 'includes/connection.inc.php';
+	include 'includes/functions.php';
 
 	if(isset($_GET['variation'])){
 		$curr_variation = htmlspecialchars($_GET['variation']);

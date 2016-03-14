@@ -1,6 +1,6 @@
 <?php
 
-	include 'connection.inc.php'; 
+	include 'includes/connection.inc.php'; 
 	include("lib/inc/chartphp_dist.php");
 
 	
