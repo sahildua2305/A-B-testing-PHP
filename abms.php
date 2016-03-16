@@ -51,27 +51,35 @@ class abms {
 
 		$name = str_replace(' ', '_', $name);
 
-		$this->connection = mysqli_connect($this->mysql_host , $this->mysql_user , $this->mysql_pass, $this->mysql_data);
-		if(!($this->connection)){
-			die(mysqli_error($this->connection));
-		}
+		 $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ, PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING);
 
-		$query = mysqli_query($this->connection, "SELECT * FROM test WHERE test_name='$name'") or die("error");
+        // generate a database connection, using the PDO connector
+        $this->connection = new PDO('mysql  :host=' .$this->mysql_host . ';dbname=' . $this->mysql_data,$this->mysql_user , $this->mysql_pass, $options);
 
-		if(mysqli_num_rows($query) == 0) {
+        $sql = "SELECT * FROM test WHERE test_name='$name'";
+		$query = $this->connection->prepare($sql);
+		$query->execute();
+
+		if($query->fetchColumn() == 0) {
 			// This is the first time this test is run
 			$curr_time = time();
 			$this->test_start_timestamp = $curr_time;
-			mysqli_query($this->connection, "INSERT INTO test(test_name, ongoing, start_timestamp) VALUES('$name', 1, '$curr_time')") or die("errorrr");
-			$query = mysqli_query($this->connection, "SELECT test_id FROM test WHERE test_name='$name'");
-			while($row = mysqli_fetch_array($query)){
+			$sql="INSERT INTO test(test_name, ongoing, start_timestamp) VALUES('$name', 1, '$curr_time')";
+			$query = $this->connection->prepare($sql);
+			$query->execute();
+			$sql="SELECT test_id FROM test WHERE test_name='$name'";
+			$query = $this->connection->prepare($sql);
+			$query->execute();
+			$row = array();
+			while(array_push($row, $query->fetch())){
 				$this->test_id = $row['test_id'];
 			}
 		}
 		else{
 			// This test has been saved earlier as well
 			$this->new_test = FALSE;
-			while($row = mysqli_fetch_array($query)){
+			$row = array();
+			while(array_push($row, $query->fetch())){
 				$this->test_start_timestamp = $row['start_timestamp'];
 				$this->test_id = $row['test_id'];
 			}
@@ -102,7 +110,9 @@ class abms {
 
 		// if this is variation for a new test, add the variation in `variation` table
 		if($this->new_test)
-			mysqli_query($this->connection, "INSERT INTO variation(test_id, variation_index, show_count, success_count) VALUES('$this->test_id', '$index', 1, 1)") or die("error in an inserting variation");
+			$sql="INSERT INTO variation(test_id, variation_index, show_count, success_count) VALUES('$this->test_id', '$index', 1, 1)";
+			$query=$this->connection->prepare($sql);
+			$query->execute();
 	}
 
 
@@ -123,8 +133,11 @@ class abms {
 		if($this->test_over){
 			$winner = 0;
 			$max_ratio = -1.0;
-			$query = mysqli_query($this->connection, "SELECT * FROM variation WHERE test_id='$this->test_id'");
-			while($row = mysqli_fetch_array($query)){
+			$sql="SELECT * FROM variation WHERE test_id='$this->test_id'";
+			$query = $this->connection->prepare($sql);
+			$query->execute();
+			$row = array();
+			while(array_push($row, $query->fetch())){
 				if($row['show_count'] != 0)
 					$ratio = $row['success_count'] / $row['show_count'];
 				else
@@ -147,10 +160,13 @@ class abms {
 			}
 			else{
 				// find the ratios for two variations and return the one with greater ratio
-				$query = mysqli_query($this->connection, "SELECT * FROM variation WHERE test_id='$this->test_id'") or die("error in getting");
+				$sql="SELECT * FROM variation WHERE test_id='$this->test_id'";
+				$query =$this->connection->prepare($sql);
+				$query->execute();
 				$winner = 0;
 				$max_ratio = -1.0;
-				while($row = mysqli_fetch_array($query)){
+				$row = array();
+				while(array_push($row, $query->fetch())){
 					if($row['show_count'] != 0)
 						$ratio = $row['success_count'] / $row['show_count'];
 					else
@@ -169,13 +185,18 @@ class abms {
 		}
 
 		// Increment show_count for this chosen variation
-		$query = mysqli_query($this->connection, "SELECT show_count FROM variation WHERE test_id='$this->test_id' AND variation_index='$this->current_variation'") or die("error in getting");
+		$sql="SELECT show_count FROM variation WHERE test_id='$this->test_id' AND variation_index='$this->current_variation'";
+		$query = $this->connection->prepare($sql);
+		$query->execute();
 		$count = 0;
-		while($row = mysqli_fetch_array($query)){
+		$row = array();
+		while(array_push($row, $query->fetch())){
 			$count = $row['show_count'];
 		}
 		$count += 1;
-		mysqli_query($this->connection, "UPDATE variation SET show_count='$count' WHERE  test_id='$this->test_id' AND variation_index='$this->current_variation'") or die("error in updating");
+		$sql="UPDATE variation SET show_count='$count' WHERE  test_id='$this->test_id' AND variation_index='$this->current_variation'";
+		$query = $this->connection->prepare($sql);
+		$query->execute();
 
 		return $this->current_variation;
 	}
