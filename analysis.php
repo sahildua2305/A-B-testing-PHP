@@ -1,12 +1,15 @@
 <?php
 
 	include("lib/inc/chartphp_dist.php");
-	require_once('includes/connection.inc.php');
+
+	//require_once('includes/connection.inc.php');
+
 	require_once('Database.php');
 
 	
 	$output = array();
 	$connect = new Database();
+	$connect->DB();
 	$query = $connect->select('test','*','ongoing=1');
 	
 	$j = 0;
