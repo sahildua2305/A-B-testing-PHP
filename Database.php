@@ -4,8 +4,12 @@
  * Handling database connection
  *
  */
+<<<<<<< HEAD
 
 
+=======
+require_once('includes/connection.inc.php');
+>>>>>>> 120dee9f73b3debc4a2baca2a77794805c823a3d
 class Database {
  
     private $DB;
@@ -18,15 +22,22 @@ class Database {
      * @return database connection handler
      */
     function DB() {
+<<<<<<< HEAD
     	$mysql_host = 'localhost';
 		$mysql_user = 'root';
 		$mysql_pass = '';
 		$mysql_data = 'ab_testing';
+=======
+>>>>>>> 120dee9f73b3debc4a2baca2a77794805c823a3d
  
         $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ, PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING);
 
         // generate a database connection, using the PDO connector
+<<<<<<< HEAD
         $this->DB = new PDO("mysql :host=$mysql_host;dbname=$mysql_data", $mysql_user, $mysql_pass, $options);
+=======
+        $this->DB = new PDO('mysql :host=' . $mysql_host . ';dbname=' . $mysql_data, $mysql_user, $mysql_pass, $options);
+>>>>>>> 120dee9f73b3debc4a2baca2a77794805c823a3d
 
         // returning connection resource
         return $this->DB;

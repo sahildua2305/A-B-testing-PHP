@@ -1,7 +1,10 @@
 <?php
 
 	include("lib/inc/chartphp_dist.php");
+<<<<<<< HEAD
 	require_once('includes/connection.inc.php');
+=======
+>>>>>>> 120dee9f73b3debc4a2baca2a77794805c823a3d
 	require_once('Database.php');
 
 	

@@ -5,6 +5,8 @@
  * @Last Modified by:   Sahil Dua
  * @Last Modified time: 2016-03-10 09:38:24
  */
+require_once('Database.php');
+
 
 
 
@@ -57,9 +59,18 @@ class abms {
 
         // generate a database connection, using the PDO connector
         $this->connection = new Database();
+<<<<<<< HEAD
         ($this->connection)->DB();
         $query=($this->connection)->select('test','*',"test_name='$name'");
   
+=======
+        //($this->connection)->DB();
+        $query=($this->connection)->select('test','*',"test_name='$name'");
+  //       $sql = "SELECT * FROM test WHERE test_name='$name'";
+		// $query = $this->connection->prepare($sql);
+		// $query->execute();
+
+>>>>>>> 120dee9f73b3debc4a2baca2a77794805c823a3d
 		if(empty($query)) {
 			// This is the first time this test is run
 			$curr_time = time();
