@@ -6,6 +6,8 @@
  * @Last Modified time: 2016-03-10 09:38:24
  */
 
+
+
 /**
  * Main class absm for defining a particular A/B test
  */
@@ -51,27 +53,31 @@ class abms {
 
 		$name = str_replace(' ', '_', $name);
 
-		$this->connection = mysqli_connect($this->mysql_host , $this->mysql_user , $this->mysql_pass, $this->mysql_data);
-		if(!($this->connection)){
-			die(mysqli_error($this->connection));
-		}
+		// $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ, PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING);
 
-		$query = mysqli_query($this->connection, "SELECT * FROM test WHERE test_name='$name'") or die("error");
-
-		if(mysqli_num_rows($query) == 0) {
+        // generate a database connection, using the PDO connector
+        $this->connection = new Database();
+        ($this->connection)->DB();
+        $query=($this->connection)->select('test','*',"test_name='$name'");
+  
+		if(empty($query)) {
 			// This is the first time this test is run
 			$curr_time = time();
 			$this->test_start_timestamp = $curr_time;
-			mysqli_query($this->connection, "INSERT INTO test(test_name, ongoing, start_timestamp) VALUES('$name', 1, '$curr_time')") or die("errorrr");
-			$query = mysqli_query($this->connection, "SELECT test_id FROM test WHERE test_name='$name'");
-			while($row = mysqli_fetch_array($query)){
+			$values=['$name', 1, '$curr_time'];
+			$col = ['test_name', 'ongoing', 'start_timestamp'];
+			($this->connection)->insert('test',$col,$values);
+		
+			$query=($this->connection)->select('test','test_id',"test_name='$name'");
+			
+			foreach ($query as $row) {
 				$this->test_id = $row['test_id'];
 			}
 		}
 		else{
 			// This test has been saved earlier as well
 			$this->new_test = FALSE;
-			while($row = mysqli_fetch_array($query)){
+			foreach ($query as $row) {
 				$this->test_start_timestamp = $row['start_timestamp'];
 				$this->test_id = $row['test_id'];
 			}
@@ -102,7 +108,9 @@ class abms {
 
 		// if this is variation for a new test, add the variation in `variation` table
 		if($this->new_test)
-			mysqli_query($this->connection, "INSERT INTO variation(test_id, variation_index, show_count, success_count) VALUES('$this->test_id', '$index', 1, 1)") or die("error in an inserting variation");
+			$col=['test_id', 'variation_index', 'show_count', 'success_count'];
+			$values=['$this->test_id', '$index', 1, 1];
+			$this->connection->insert('variation',$col,$values);
 	}
 
 
@@ -123,8 +131,9 @@ class abms {
 		if($this->test_over){
 			$winner = 0;
 			$max_ratio = -1.0;
-			$query = mysqli_query($this->connection, "SELECT * FROM variation WHERE test_id='$this->test_id'");
-			while($row = mysqli_fetch_array($query)){
+			$query = $this->connection->select('variation','*',"test_id='$this->test_id'");
+			
+			foreach ($query as $row) {
 				if($row['show_count'] != 0)
 					$ratio = $row['success_count'] / $row['show_count'];
 				else
@@ -147,10 +156,12 @@ class abms {
 			}
 			else{
 				// find the ratios for two variations and return the one with greater ratio
-				$query = mysqli_query($this->connection, "SELECT * FROM variation WHERE test_id='$this->test_id'") or die("error in getting");
+				
+				$query =$this->connection->select('variation','*',"test_id='$this->test_id'");
+				
 				$winner = 0;
 				$max_ratio = -1.0;
-				while($row = mysqli_fetch_array($query)){
+				foreach ($query as $row) {
 					if($row['show_count'] != 0)
 						$ratio = $row['success_count'] / $row['show_count'];
 					else
@@ -169,13 +180,16 @@ class abms {
 		}
 
 		// Increment show_count for this chosen variation
-		$query = mysqli_query($this->connection, "SELECT show_count FROM variation WHERE test_id='$this->test_id' AND variation_index='$this->current_variation'") or die("error in getting");
+		$query = $this->connection->select('variation','show_count',"test_id='$this->test_id' AND variation_index='$this->current_variation'");
+		
 		$count = 0;
-		while($row = mysqli_fetch_array($query)){
+		foreach ($query as $row) {
 			$count = $row['show_count'];
 		}
 		$count += 1;
-		mysqli_query($this->connection, "UPDATE variation SET show_count='$count' WHERE  test_id='$this->test_id' AND variation_index='$this->current_variation'") or die("error in updating");
+		
+		$query = ($this->connection)->update('variation','show_count',$count,"test_id='$this->test_id' AND variation_index='$this->current_variation'");
+
 
 		return $this->current_variation;
 	}

@@ -5,7 +5,8 @@
  * @Last Modified by:   Sahil Dua
  * @Last Modified time: 2016-03-10 03:50:45
  */
-
+require_once('includes/connection.inc.php');
+require_once('Database.php');
 require_once('abms.php');
 
 $my_test = new abms('hyperlink text 2', 6*70707070, TRUE);
