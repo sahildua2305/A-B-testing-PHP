@@ -1,6 +1,6 @@
 <?php
 	
-	include 'includes/connection.inc.php';
+	require_once('Database.php');
 	include 'includes/functions.php';
 
 	if(isset($_GET['variation'])){

@@ -1,14 +1,18 @@
 <?php
 
-	include 'includes/connection.inc.php'; 
 	include("lib/inc/chartphp_dist.php");
+	require_once('includes/connection.inc.php');
+	require_once('Database.php');
 
 	
 	$output = array();
-
-	$test_query = mysqli_query($connection,"SELECT * FROM test WHERE ongoing=1") or die("error in getting");
+	$connect = new Database();
+	$query = $connect->select('test','*','ongoing=1');
+	
 	$j = 0;
-	while($row = mysqli_fetch_array($test_query)){
+
+	$row = array();
+	foreach ($query as $row) {
 		$test_id = $row['test_id'];
 
 		$p = new chartphp();
@@ -16,9 +20,12 @@
 		$p->data = array(array());
 		$p->chart_type = "bar";
 
-		$query = mysqli_query($connection, "SELECT * FROM variation WHERE test_id='$test_id'");
+		$q = $connect->select('variation','*',"test_id='$test_id'");
+
 		$i = 0;
-		while($r = mysqli_fetch_array($query)){
+		//$r = $query;
+		//while(array_push($r,$query)
+		foreach ($q as $r) {
 			if($r['show_count'] != 0)
 				$ratio = $r['success_count'] / $r['show_count'];
 			else
