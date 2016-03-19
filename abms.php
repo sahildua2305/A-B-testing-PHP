@@ -3,14 +3,10 @@
  * @Author: sahildua2305
  * @Date:   2016-03-10 01:05:47
  * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-10 09:38:24
+ * @Last Modified time: 2016-03-20 00:06:09
  */
+
 require_once('Database.php');
-
-
-
-
-
 
 /**
  * Main class absm for defining a particular A/B test
@@ -62,16 +58,7 @@ class abms {
         // generate a database connection, using the PDO connector
         $this->connection = new Database();
 
-        ($this->connection)->DB();
-        $query=($this->connection)->select('test','*',"test_name='$name'");
-  
-
-     
-        //($this->connection)->DB();
-  //       $sql = "SELECT * FROM test WHERE test_name='$name'";
-		// $query = $this->connection->prepare($sql);
-		// $query->execute();
-
+        $query = $this->connection->select('test','*',"test_name='$name'");
 
 		if(empty($query)) {
 			// This is the first time this test is run
@@ -79,9 +66,9 @@ class abms {
 			$this->test_start_timestamp = $curr_time;
 			$values=['$name', 1, '$curr_time'];
 			$col = ['test_name', 'ongoing', 'start_timestamp'];
-			($this->connection)->insert('test',$col,$values);
+			$this->connection->insert('test',$col,$values);
 		
-			$query=($this->connection)->select('test','test_id',"test_name='$name'");
+			$query = $this->connection->select('test','test_id',"test_name='$name'");
 			
 			foreach ($query as $row) {
 				$this->test_id = $row['test_id'];
@@ -201,7 +188,7 @@ class abms {
 		}
 		$count += 1;
 		
-		$query = ($this->connection)->update('variation','show_count',$count,"test_id='$this->test_id' AND variation_index='$this->current_variation'");
+		$query = $this->connection->update('variation','show_count',$count,"test_id='$this->test_id' AND variation_index='$this->current_variation'");
 
 
 		return $this->current_variation;

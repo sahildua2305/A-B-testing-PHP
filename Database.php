@@ -9,7 +9,7 @@ class Database {
  
     private $DB;
  
-    function __construct() {       
+    function __construct() {
     }
 
     /**
@@ -29,7 +29,6 @@ class Database {
 
         $this->DB = new PDO("mysql:host=$mysql_host;dbname=$mysql_data", $mysql_user, $mysql_pass, $options);
 
-        
 
         // returning connection resource
         return $this->DB;
