@@ -9,7 +9,7 @@
 	
 	$output = array();
 	$connect = new Database();
-	$connect->DB();
+	//$connect->DB();
 	$query = $connect->select('test','*','ongoing=1');
 	
 	$j = 0;
