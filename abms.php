@@ -71,7 +71,7 @@ class abms {
 			$query = $this->connection->select('test',array('test_id'),"test_name='$name'");
 			
 			foreach ($query as $row) {
-				$this->test_id = $row['test_id'];
+				$this->test_id = $row->test_id;
 			}
 		}
 		else{
@@ -135,13 +135,13 @@ class abms {
 			$query = $this->connection->select('variation',array('*'),"test_id='$this->test_id'");
 			
 			foreach ($query as $row) {
-				if($row['show_count'] != 0)
-					$ratio = $row['success_count'] / $row['show_count'];
+				if($row->show_count != 0)
+					$ratio = $row->success_count/ $row->show_count;
 				else
 					$ratio = 0;
 				if($ratio > $max_ratio){
 					$max_ratio = $ratio;
-					$winner = $row['variation_index'];
+					$winner = $row->variation_index;
 				}
 			}
 

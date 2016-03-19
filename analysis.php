@@ -10,27 +10,27 @@
 	$output = array();
 	$connect = new Database();
 	//$connect->DB();
-	$query = $connect->select('test','*','ongoing=1');
+	$query = $connect->select('test',array('*'),'ongoing=1');
 	
 	$j = 0;
 
 	$row = array();
 	foreach ($query as $row) {
-		$test_id = $row['test_id'];
+		$test_id = $row->test_id;
 
 		$p = new chartphp();
 
 		$p->data = array(array());
 		$p->chart_type = "bar";
 
-		$q = $connect->select('variation','*',"test_id='$test_id'");
+		$q = $connect->select('variation',array('*'),"test_id='$test_id'");
 
 		$i = 0;
 		//$r = $query;
 		//while(array_push($r,$query)
 		foreach ($q as $r) {
-			if($r['show_count'] != 0)
-				$ratio = $r['success_count'] / $r['show_count'];
+			if($r->show_count != 0)
+				$ratio = $r->success_count / $r->show_count;
 			else
 				$ratio = 0.0;
 			echo " . ";
