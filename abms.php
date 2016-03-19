@@ -3,7 +3,7 @@
  * @Author: sahildua2305
  * @Date:   2016-03-10 01:05:47
  * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-19 23:45:53
+ * @Last Modified time: 2016-03-20 00:06:09
  */
 
 require_once('Database.php');
@@ -58,16 +58,7 @@ class abms {
         // generate a database connection, using the PDO connector
         $this->connection = new Database();
 
-        // ($this->connection)->DB();
         $query = $this->connection->select('test','*',"test_name='$name'");
-  
-
-     
-        //($this->connection)->DB();
-  //       $sql = "SELECT * FROM test WHERE test_name='$name'";
-		// $query = $this->connection->prepare($sql);
-		// $query->execute();
-
 
 		if(empty($query)) {
 			// This is the first time this test is run
