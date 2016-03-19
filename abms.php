@@ -3,7 +3,7 @@
  * @Author: sahildua2305
  * @Date:   2016-03-10 01:05:47
  * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-20 00:06:09
+ * @Last Modified time: 2016-03-20 01:02:40
  */
 
 require_once('Database.php');
@@ -58,17 +58,17 @@ class abms {
         // generate a database connection, using the PDO connector
         $this->connection = new Database();
 
-        $query = $this->connection->select('test','*',"test_name='$name'");
+        $query = $this->connection->select('test',array('*'),"test_name='$name'");
 
 		if(empty($query)) {
 			// This is the first time this test is run
 			$curr_time = time();
 			$this->test_start_timestamp = $curr_time;
-			$values=['$name', 1, '$curr_time'];
-			$col = ['test_name', 'ongoing', 'start_timestamp'];
-			$this->connection->insert('test',$col,$values);
+			$values = array('$name', 1, '$curr_time');
+			$col = array('test_name', 'ongoing', 'start_timestamp');
+			$this->connection->insert('test', $col, $values);
 		
-			$query = $this->connection->select('test','test_id',"test_name='$name'");
+			$query = $this->connection->select('test',array('test_id'),"test_name='$name'");
 			
 			foreach ($query as $row) {
 				$this->test_id = $row['test_id'];
@@ -78,8 +78,8 @@ class abms {
 			// This test has been saved earlier as well
 			$this->new_test = FALSE;
 			foreach ($query as $row) {
-				$this->test_start_timestamp = $row['start_timestamp'];
-				$this->test_id = $row['test_id'];
+				$this->test_start_timestamp = $row->start_timestamp;
+				$this->test_id = $row->test_id;
 			}
 		}
 
@@ -107,10 +107,11 @@ class abms {
 		array_push($this->variations, $a);
 
 		// if this is variation for a new test, add the variation in `variation` table
-		if($this->new_test)
-			$col=['test_id', 'variation_index', 'show_count', 'success_count'];
-			$values=['$this->test_id', '$index', 1, 1];
-			$this->connection->insert('variation',$col,$values);
+		if($this->new_test){
+			$col = array('test_id', 'variation_index', 'show_count', 'success_count');
+			$values = array('$this->test_id', '$index', 1, 1);
+			$this->connection->insert('variation', $col, $values);
+		}
 	}
 
 
@@ -131,7 +132,7 @@ class abms {
 		if($this->test_over){
 			$winner = 0;
 			$max_ratio = -1.0;
-			$query = $this->connection->select('variation','*',"test_id='$this->test_id'");
+			$query = $this->connection->select('variation',array('*'),"test_id='$this->test_id'");
 			
 			foreach ($query as $row) {
 				if($row['show_count'] != 0)
@@ -157,18 +158,18 @@ class abms {
 			else{
 				// find the ratios for two variations and return the one with greater ratio
 				
-				$query =$this->connection->select('variation','*',"test_id='$this->test_id'");
+				$query =$this->connection->select('variation',array('*'),"test_id='$this->test_id'");
 				
 				$winner = 0;
 				$max_ratio = -1.0;
 				foreach ($query as $row) {
-					if($row['show_count'] != 0)
-						$ratio = $row['success_count'] / $row['show_count'];
+					if($row->show_count != 0)
+						$ratio = $row->success_count / $row->show_count;
 					else
 						$ratio = 0;
 					if($ratio > $max_ratio){
 						$max_ratio = $ratio;
-						$winner = $row['variation_index'];
+						$winner = $row->variation_index;
 					}
 				}
 				$this->current_variation = $winner;
@@ -180,15 +181,15 @@ class abms {
 		}
 
 		// Increment show_count for this chosen variation
-		$query = $this->connection->select('variation','show_count',"test_id='$this->test_id' AND variation_index='$this->current_variation'");
+		$query = $this->connection->select('variation',array('show_count'),"test_id='$this->test_id' AND variation_index='$this->current_variation'");
 		
 		$count = 0;
 		foreach ($query as $row) {
-			$count = $row['show_count'];
+			$count = $row->show_count;
 		}
 		$count += 1;
 		
-		$query = $this->connection->update('variation','show_count',$count,"test_id='$this->test_id' AND variation_index='$this->current_variation'");
+		$query = $this->connection->update('variation',array('show_count'),array($count),"test_id='$this->test_id' AND variation_index='$this->current_variation'");
 
 
 		return $this->current_variation;
