@@ -35,9 +35,9 @@
 				$ratio = 0.0;
 			echo " . ";
 			if($i == 0)
-				array_push(($p->data)[0], array('A', $ratio));
+				array_push($p->data[0], array('A', $ratio));
 			else if($i == 1)
-				array_push(($p->data)[0], array('B', $ratio));
+				array_push($p->data[0], array('B', $ratio));
 			$i += 1;
 		}
 
