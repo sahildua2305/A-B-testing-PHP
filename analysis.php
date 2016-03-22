@@ -41,7 +41,7 @@
 			$i += 1;
 		}
 
-		$p->title = "Performance analysis for - " . $row['test_name'];
+		$p->title = "Performance analysis for - " . $row->test_name;
 		$p->ylabel = "Success rate";
 		$p->export = true;
 		$p->options["legend"]["show"] = true;
