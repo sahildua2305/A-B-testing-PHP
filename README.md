@@ -9,6 +9,7 @@ A light-weight and modular framework written in PHP that automates A/B testing
  - Automatically declares a winner at the end of the mentioned time frame
  - Able to switch to the segment that wins statistically at the end of the experiment
  - Adaptive algorithm to favor the winning segment
+ - Uses PDO for database connection
 
 ### Usage:
  - Clone the repo on your local machine
