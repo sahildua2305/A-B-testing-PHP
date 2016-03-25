@@ -1,4 +1,5 @@
 <?php
+	
 
 	include("lib/inc/chartphp_dist.php");
 
@@ -9,12 +10,15 @@
 	
 	$output = array();
 	$connect = new Database();
+	
+
 	//$connect->DB();
 	$query = $connect->select('test',array('*'),'ongoing=1');
 	
 	$j = 0;
 
 	$row = array();
+
 	foreach ($query as $row) {
 		$test_id = $row->test_id;
 
@@ -39,12 +43,15 @@
 			else if($i == 1)
 				array_push($p->data[0], array('B', $ratio));
 			$i += 1;
+
 		}
 
-		$p->title = "Performance analysis for - " . $row['test_name'];
+		$p->title = "Performance analysis for - ". $row->test_name;
 		$p->ylabel = "Success rate";
 		$p->export = true;
 		$p->options["legend"]["show"] = true;
+		//echo "hi";
+
 
 		$output[$j] = $p->render('c' . $j);
 

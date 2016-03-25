@@ -6,7 +6,8 @@
  * @Last Modified time: 2016-03-20 01:02:40
  */
 
-require_once('Database.php');
+//require_once('Database.php');
+require_once('ab-testing-calculator.php');
 
 /**
  * Main class absm for defining a particular A/B test
@@ -130,21 +131,29 @@ class abms {
 
 		// If the current test is already over, return the automatic winner
 		if($this->test_over){
-			$winner = 0;
-			$max_ratio = -1.0;
+			// $winner = 0;
+			// $max_ratio = -1.0;
 			$query = $this->connection->select('variation',array('*'),"test_id='$this->test_id'");
 			
 			foreach ($query as $row) {
 				if($row->show_count != 0)
-					$ratio = $row->success_count/ $row->show_count;
+					{
+						array_push($ratio, $row->success_count);
+						array_push($ratio, $row->show_count);
+					}
 				else
-					$ratio = 0;
-				if($ratio > $max_ratio){
-					$max_ratio = $ratio;
-					$winner = $row->variation_index;
-				}
+					{
+						array_push($ratio,0);
+						array_push($ratio,0);
+					}
+				// if($ratio > $max_ratio){
+				// 	$max_ratio = $ratio;
+				// 	$winner = $row->variation_index;
+				// }
 			}
-
+			if(calculate($ratio[1],$ratio[0],$ratio[3],$ratio[2])){
+				$winner = $row->variation_index;
+			}
 			return $winner;
 		}
 
