@@ -3,7 +3,7 @@
  * @Author: sahildua2305
  * @Date:   2016-03-10 01:05:47
  * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-20 01:02:40
+ * @Last Modified time: 2016-03-27 00:20:54
  */
 
 //require_once('Database.php');
@@ -131,30 +131,42 @@ class abms {
 
 		// If the current test is already over, return the automatic winner
 		if($this->test_over){
-			// $winner = 0;
-			// $max_ratio = -1.0;
 			$query = $this->connection->select('variation',array('*'),"test_id='$this->test_id'");
-			
+
+			$variation_indices = array();
+			$ratio = array();
+
 			foreach ($query as $row) {
-				if($row->show_count != 0)
-					{
-						array_push($ratio, $row->success_count);
-						array_push($ratio, $row->show_count);
-					}
-				else
-					{
-						array_push($ratio,0);
-						array_push($ratio,0);
-					}
-				// if($ratio > $max_ratio){
-				// 	$max_ratio = $ratio;
-				// 	$winner = $row->variation_index;
-				// }
+				if($row->show_count != 0) {
+					array_push($ratio, $row->success_count);
+					array_push($ratio, $row->show_count);
+				}
+				else {
+					array_push($ratio,0);
+					array_push($ratio,0);
+				}
+				array_push($variation_indices, $row->variation_index);
 			}
-			if(calculate($ratio[1],$ratio[0],$ratio[3],$ratio[2])){
-				$winner = $row->variation_index;
+
+			// if no variation has been added for current test
+			if(count($array) == 0) {
+				return -1;
 			}
-			return $winner;
+			// if only one variation is there for current test
+			else if(count($ratio) == 2) {
+				if(calculate($ratio[1],$ratio[0],$ratio[3],$ratio[2])){
+					return $variation_indices[1];
+				}
+				else{
+					return $variation_indices[0];
+				}
+			}
+			// if more than 1 variations are there for current test
+			else {
+				////// TODO: Handle this case when more than one variations are there for current test
+				///
+				////////////
+			}
 		}
 
 		// check for which algorithm we're going to use for splitting the user traffic
