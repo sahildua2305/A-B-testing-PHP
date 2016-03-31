@@ -96,14 +96,6 @@ function calculate($control_number_visitors, $control_number_conversions, $treat
 
 	$cratio = str_pad((sprintf('%0.2f', $confidence) * 100) . '%', 10, ' ', STR_PAD_BOTH);
 
-	//print "Split and AB Testing Confidence Calculator\n\n";
-	// print "------------------------------------------\n\n";
-	//print "Treatment | Visitors Treated | Conversions | Conversion Rate |     Z-Score     | Confidence\n";
-	//print "-------------------------------------------------------------------------------------------\n";
-	// print "Control   | $cV | $cC | $cr_c |                 |        \n";
-	// print "Treatment | $tV | $tC | $cr_t | $zs | $cratio        \n";
-	// print "-------------------------------------------------------------------------------------------\n";
-
 	if ($cratio >= 95) {
 		return 1;
 	}
@@ -111,14 +103,3 @@ function calculate($control_number_visitors, $control_number_conversions, $treat
 		return 0;
 	}
 }
-
-//Example #1:
-//calculate(15, 2, 15, 6);
-
-//Example #2:
-//calculate(10, 2, 10, 6);
-
-//print zscore($c, $tA).' - '.cumnormdist(zscore($c, $tA))."\n";
-//print zscore($c, $tB).' - '.cumnormdist(zscore($c, $tB))."\n";
-//print zscore($c, $tC).' - '.cumnormdist(zscore($c, $tC))."\n";
-//print '1.645 - '.cumnormdist(1.645)."\n";
