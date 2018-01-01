@@ -1,10 +1,4 @@
 <?php
-/**
- * @Author: sahildua2305
- * @Date:   2016-03-10 01:01:24
- * @Last Modified by:   Sahil Dua
- * @Last Modified time: 2016-03-20 01:03:11
- */
 // require_once('includes/connection.inc.php');
 require_once('Database.php');
 require_once('abms.php');
